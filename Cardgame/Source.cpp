@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "CardTypes.h"
+#include "Card.h"
 
 using namespace std;
 
@@ -10,9 +10,11 @@ int main() {
 	Suit s = Suit::hearts;
 	Suit s2 = Suit::hearts;
 
+	Card card1(Rank::ace, Suit::hearts);
+	Card card2(Rank::king, Suit::spades);
 
 	//int x = 12 + static_cast<int>(r);
-	cout << (s==s2) << endl;
+	cout << (card1 == card2) << endl;
 	
 
 	return 0;
