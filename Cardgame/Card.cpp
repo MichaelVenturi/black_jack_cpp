@@ -2,7 +2,7 @@
 
 
 // return suit as a string
-std::string to_string(Suit s) {
+std::string toString(Suit s) {
 	switch (s) {
 	case Suit::hearts:
 		return "hearts";
@@ -19,20 +19,20 @@ std::string to_string(Suit s) {
 
 // Suit oss
 std::ostream& operator<<(std::ostream& out, const Suit& s) {
-	out << to_string(s);
+	out << toString(s);
 	return out;
 }
 
 // suit comparators 
 bool operator==(Suit s1, Suit s2) {
-	return (to_string(s1).compare(to_string(s2)) == 0);
+	return (toString(s1).compare(toString(s2)) == 0);
 }
 bool operator!=(Suit s1, Suit s2) {
 	return !(operator==(s1, s2));
 }
 
 // return Rank as a string (tedious :/ )
-std::string to_string(Rank r) {
+std::string toString(Rank r) {
 	switch (r) {
 	case Rank::ace:return "ace";
 	case Rank::two:return "two";
@@ -50,7 +50,7 @@ std::string to_string(Rank r) {
 	}
 }
 // return the Rank as an integer value
-int to_value(Rank r) {
+int toValue(Rank r) {
 	switch (r) {
 	case Rank::jack:
 	case Rank::queen:
@@ -62,7 +62,7 @@ int to_value(Rank r) {
 }
 // rank oss
 std::ostream& operator<<(std::ostream& out, const Rank& r) {
-	out << to_string(r);
+	out << toString(r);
 	return out;
 }
 // rank comparisons (not for black jack)
@@ -95,4 +95,19 @@ bool operator<=(Rank r1, Rank r2)
 bool operator>=(Rank r1, Rank r2)
 {
 	return !(operator<(r1, r2));
+}
+
+// Card toString
+std::string toString(Card c) {
+	return (toString(c.rank) + " of " + toString(c.suit));
+}
+bool Card::operator==(Card c) {
+	return this->rank == c.rank;
+}
+bool Card::operator!=(Card c) {
+	return !(operator==(c));
+}
+std::ostream& operator<<(std::ostream& out, const Card& c){
+	out << c.rank << " of " << c.suit;
+	return out;
 }

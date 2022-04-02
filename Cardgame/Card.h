@@ -12,16 +12,12 @@ enum class Suit {
 	clubs,
 	spades
 };
-// return suit as a string
-std::string to_string(Suit s);
-// Suit oss
+std::string toString(Suit s);
 std::ostream& operator<<(std::ostream& out, const Suit& s);
-// compare suit
 bool operator==(Suit s1, Suit s2);
 bool operator!=(Suit s1, Suit s2);
 
 // create type for rank
-// includes aces high and aces low (determined by card game)
 enum class Rank {
 	ace = 1,
 	two = 2,
@@ -37,13 +33,9 @@ enum class Rank {
 	queen = 12,
 	king = 13,
 };
-// return Rank as a string (tedious :/ )
-std::string to_string(Rank r);
-// return the Rank as an integer value
-int to_value(Rank r);
-// rank oss
+std::string toString(Rank r);
+int toValue(Rank r);
 std::ostream& operator<<(std::ostream& out, const Rank& r);
-// compare rank
 // these operators will likely only be used in a game where jacks, queens, and kings are ranked differently
 bool operator==(Rank r1, Rank r2);
 bool operator!=(Rank r1, Rank r2);
@@ -51,7 +43,6 @@ bool operator<(Rank r1, Rank r2);
 bool operator>(Rank r1, Rank r2);
 bool operator<=(Rank r1, Rank r2);
 bool operator>=(Rank r1, Rank r2);
-
 
 struct Card {
 
@@ -61,19 +52,10 @@ struct Card {
 	Card() : rank(Rank::ace), suit(Suit::diamonds){};
 	Card(Rank r, Suit s) : rank(r), suit(s) {};
 
-	int compareTo(Card c);
-
-	std::ostream& operator<<(std::ostream& out) { 
-		out << (to_string(rank) + " of " + to_string(suit));
-		return out;
-	}
-	bool operator==(Card c) {
-		return this->rank == c.rank;
-	}
-	bool operator!=(Card c) {
-		return !(operator==(c));
-	}
-	
+	bool operator==(Card c);
+	bool operator!=(Card c);
 };
+std::string toString(Card c);
+std::ostream& operator<<(std::ostream& out, const Card& c);
 
 #endif
