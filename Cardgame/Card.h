@@ -5,6 +5,10 @@
 #include <iostream>
 #include <string>
 
+
+extern const int SUIT_MAX;
+extern const int RANK_MAX;
+
 // create type for Suit
 enum class Suit {
 	hearts,
@@ -16,6 +20,8 @@ std::string toString(Suit s);
 std::ostream& operator<<(std::ostream& out, const Suit& s);
 bool operator==(Suit s1, Suit s2);
 bool operator!=(Suit s1, Suit s2);
+// generate a suit based on an integer value (for populating deck)
+Suit generateSuit(int i);
 
 // create type for rank
 enum class Rank {
@@ -43,6 +49,8 @@ bool operator<(Rank r1, Rank r2);
 bool operator>(Rank r1, Rank r2);
 bool operator<=(Rank r1, Rank r2);
 bool operator>=(Rank r1, Rank r2);
+// generate a rank based on an integer value (for populating deck)
+Rank generateRank(int i);
 
 struct Card {
 

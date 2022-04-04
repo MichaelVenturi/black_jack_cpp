@@ -58,7 +58,7 @@ ItemType ArrayStack<ItemType>::peek() const {
 template <class ItemType>
 void ArrayStack<ItemType>::shuffle() {
 	srand(time(NULL));
-	for (int i = size - 1; i > 0; i--) {
+	for (int i = top; i > 0; i--) {
 		int j = rand() % (i + 1);
 		ItemType temp = items[i];
 		items[i] = items[j];
@@ -76,7 +76,7 @@ ItemType ArrayStack<ItemType>::itemAt(int i) {
 
 template <class ItemType>
 void ArrayStack<ItemType>::print() {
-	for (int i = 0; i < size; i++) {
+	for (int i = 0; i < top+1; i++) {
 		std::cout << items[i] << std::endl;
 	}
 }
