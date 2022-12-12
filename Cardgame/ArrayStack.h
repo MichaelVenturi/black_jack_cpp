@@ -18,6 +18,9 @@ public:
 	// constructors
 	ArrayStack();
 	ArrayStack(int s);
+	// copy constructor
+	ArrayStack(const ArrayStack&);
+
 	// destructor
 	~ArrayStack();
 
@@ -31,6 +34,8 @@ public:
 	void shuffle();
 	ItemType itemAt(int i);
 	void print();
+
+	ArrayStack<ItemType> operator=(const ArrayStack&);
 };
 
 

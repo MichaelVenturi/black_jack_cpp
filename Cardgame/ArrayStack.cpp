@@ -13,6 +13,13 @@ ArrayStack<ItemType>::ArrayStack(int s) : top(-1) {
 	items = new ItemType[size];
 }
 
+// copy constructor
+template <class ItemType>
+ArrayStack<ItemType>::ArrayStack(const ArrayStack& other) : top(other.top), size(other.size) {
+	items= new ItemType[other.size];
+	copy(other.items, other.items + (other.top + 1), items);
+}
+
 // destructor
 template <class ItemType>
 ArrayStack<ItemType>::~ArrayStack() {
@@ -81,7 +88,15 @@ void ArrayStack<ItemType>::print() {
 	}
 }
 
-
+// overload assignment operator
+template <class ItemType>
+ArrayStack<ItemType> ArrayStack<ItemType>::operator=(const ArrayStack& other){
+	this.top = other.top;
+	this.size = other.size;
+	this.items = new ItemType[size];
+	copy(other.items, other.items + (top +1), this.items);
+	return *this;
+}
 
 // explicit instantiations
 template class ArrayStack<Card>;
