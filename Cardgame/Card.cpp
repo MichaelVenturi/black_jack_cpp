@@ -113,11 +113,11 @@ bool operator>(Rank r1, Rank r2)
 }
 bool operator<=(Rank r1, Rank r2)
 {
-	return !(operator>(r1, r2));
+	return static_cast<int>(r1) <= static_cast<int>(r2);
 }
 bool operator>=(Rank r1, Rank r2)
 {
-	return !(operator<(r1, r2));
+	return (operator<=(r2, r1));
 }
 // generate rank
 Rank generateRank(int i) {
