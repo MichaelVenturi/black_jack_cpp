@@ -19,6 +19,21 @@ std::string toString(Suit s) {
 		break;
 	}
 }
+//return suit as a number
+int toValue(Suit s) {
+	switch(s){
+		case Suit::hearts:
+			return 3;
+		case Suit::diamonds:
+			return 2;
+		case Suit::clubs:
+			return 1;
+		case Suit::spades:
+			return 4;
+		default:
+			break;
+	}
+}
 // Suit oss
 std::ostream& operator<<(std::ostream& out, const Suit& s) {
 	out << toString(s);

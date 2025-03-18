@@ -17,6 +17,8 @@ enum class Suit {
 	spades
 };
 std::string toString(Suit s);
+// let's add a to value func so we can compare suits, for games where some suits are better than others
+int toValue(Suit s);
 std::ostream& operator<<(std::ostream& out, const Suit& s);
 bool operator==(Suit s1, Suit s2);
 bool operator!=(Suit s1, Suit s2);
