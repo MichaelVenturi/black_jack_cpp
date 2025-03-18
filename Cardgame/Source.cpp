@@ -18,6 +18,8 @@ int main() {
 	d.printDeck();
 
 	
+	ArrayStack<Card> playerHand;
+	ArrayStack<Card> dealerHand;
 	
 
 	
