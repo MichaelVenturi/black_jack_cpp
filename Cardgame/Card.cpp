@@ -150,7 +150,19 @@ bool Card::operator==(Card c) {
 bool Card::operator!=(Card c) {
 	return !(operator==(c));
 }
+// add two cards (for blackjack)
+int Card::operator+(Card c){
+	return toValue(this->rank) + toValue(c.rank);
+}
 std::ostream& operator<<(std::ostream& out, const Card& c){
 	out << c.rank << " of " << c.suit;
 	return out;
+}
+// add card to a number (for blackjack)
+int operator+(int i, Card c){
+	return i + toValue(c.rank);
+}
+int operator+=(int& i, Card c){
+	i = i + c;
+	return i;
 }

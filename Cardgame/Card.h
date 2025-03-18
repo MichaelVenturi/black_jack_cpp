@@ -64,8 +64,11 @@ struct Card {
 
 	bool operator==(Card c);
 	bool operator!=(Card c);
+	int operator+(Card c);
 };
 std::string toString(Card c);
 std::ostream& operator<<(std::ostream& out, const Card& c);
+int operator+(int i, Card c);
+int operator+=(int& i, Card c);
 
 #endif

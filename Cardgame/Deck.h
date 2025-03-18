@@ -17,6 +17,8 @@ public:
 
 	// some of these methods are just going to call the arraystack methods
 	void addCard(Card c) { deck.push(c); }
+	bool isEmpty() {return deck.isEmpty(); }
+	Card peek() {return deck.peek(); }
 	void printDeck() { deck.print(); }
 
 	// parameter will be a player or dealer hand
