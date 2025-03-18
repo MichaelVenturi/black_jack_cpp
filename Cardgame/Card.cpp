@@ -19,6 +19,21 @@ std::string toString(Suit s) {
 		break;
 	}
 }
+//return suit as a number
+int toValue(Suit s) {
+	switch(s){
+		case Suit::hearts:
+			return 3;
+		case Suit::diamonds:
+			return 2;
+		case Suit::clubs:
+			return 1;
+		case Suit::spades:
+			return 4;
+		default:
+			break;
+	}
+}
 // Suit oss
 std::ostream& operator<<(std::ostream& out, const Suit& s) {
 	out << toString(s);
@@ -98,11 +113,11 @@ bool operator>(Rank r1, Rank r2)
 }
 bool operator<=(Rank r1, Rank r2)
 {
-	return !(operator>(r1, r2));
+	return static_cast<int>(r1) <= static_cast<int>(r2);
 }
 bool operator>=(Rank r1, Rank r2)
 {
-	return !(operator<(r1, r2));
+	return (operator<=(r2, r1));
 }
 // generate rank
 Rank generateRank(int i) {
@@ -135,7 +150,19 @@ bool Card::operator==(Card c) {
 bool Card::operator!=(Card c) {
 	return !(operator==(c));
 }
+// add two cards (for blackjack)
+int Card::operator+(Card c){
+	return toValue(this->rank) + toValue(c.rank);
+}
 std::ostream& operator<<(std::ostream& out, const Card& c){
 	out << c.rank << " of " << c.suit;
 	return out;
+}
+// add card to a number (for blackjack)
+int operator+(int i, Card c){
+	return i + toValue(c.rank);
+}
+int operator+=(int& i, Card c){
+	i = i + c;
+	return i;
 }
