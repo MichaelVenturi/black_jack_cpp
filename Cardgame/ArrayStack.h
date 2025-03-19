@@ -31,6 +31,7 @@ public:
 	bool pop();
 	ItemType peek() const;
 
+	// defaults to searching if array contains this exact item, if a compare function is passed, returns the first element that passes the comparison (like matching rank)
 	bool has(ItemType item, std::function<bool(ItemType, ItemType)> compareFunc = NULL);
 
 	void shuffle();

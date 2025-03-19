@@ -76,6 +76,7 @@ void playBlackJack(){
 	}
 }
 
+// check if the player has an ace, necessary since the score will fluctuate if they do
 bool hasAce(ArrayStack<Card> hand) {
 	Card ace;
 	return hand.has(ace, [](Card c1, Card c2)-> bool {return c1.rank == c2.rank; });

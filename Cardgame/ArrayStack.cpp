@@ -30,11 +30,13 @@ template <class ItemType>
 bool ArrayStack<ItemType>::isEmpty() const {
 	return top < 0;
 }
+
 template <class ItemType>
 bool ArrayStack<ItemType>::isFull() const {
 	return top == size - 1;
 }
 
+// add element to top of stack
 template <class ItemType>
 bool ArrayStack<ItemType>::push(ItemType newItem)  {
 	if (!isFull()) {
@@ -44,6 +46,7 @@ bool ArrayStack<ItemType>::push(ItemType newItem)  {
 	}
 	return false;
 }
+// remove top element from stack
 template <class ItemType>
 bool ArrayStack<ItemType>::pop()  {
 	if (!isEmpty()) {
@@ -53,6 +56,7 @@ bool ArrayStack<ItemType>::pop()  {
 	return false;
 }
 
+// view top of stack
 template <class ItemType>
 ItemType ArrayStack<ItemType>::peek() const {
 	if (!isEmpty()) {
@@ -61,7 +65,7 @@ ItemType ArrayStack<ItemType>::peek() const {
 	exit(1);
 }
 
-// this function will check if I have a specific card, but I also want to check just if it has the cards rank or maybe even suit.  I need a different function for that
+// this function will check if I have a specific card/itemtype, but I also want to check just if it has the cards rank or maybe even suit.  I need a different function for that to pass as a param
 template <class ItemType>
 bool ArrayStack<ItemType>::has(ItemType item, std::function<bool(ItemType, ItemType)> compareFunc) {
 	if (compareFunc) {
@@ -90,6 +94,7 @@ void ArrayStack<ItemType>::shuffle() {
 	}
 }
 
+// get item at index
 template <class ItemType>
 ItemType ArrayStack<ItemType>::itemAt(int i) {
 	if (!isEmpty() && i <= top && i >= 0) {
