@@ -24,7 +24,7 @@ public:
 	// destructor
 	~ArrayStack();
 
-	int getSize() { return size; };
+	int getSize() { return top + 1; };
 	bool isEmpty() const;
 	bool isFull() const;
 	bool push(ItemType newItem);

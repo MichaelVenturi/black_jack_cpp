@@ -6,6 +6,7 @@ using namespace std;
 
 void playBlackJack();
 bool hasAce(ArrayStack<Card> hand);
+int handTotal(ArrayStack<Card> hand, int curTotal = -1);
 int main() {
 
 	bool acesHigh = false;
@@ -23,9 +24,9 @@ int main() {
 
 	playerHand.push(card1);
 
-	cout << hasAce(playerHand);
 	
-	//playBlackJack();
+	
+	playBlackJack();
 
 	return 0;
 }
@@ -40,24 +41,37 @@ void playBlackJack(){
 	ArrayStack<Card> dealerHand;
 	int playerSum = 0;
 	int dealerSum = 0;
+	int dealerShownSum = 0;
+	Card dealerHidden; // the card the player cannot see
 	// deal 4 cards: 2 to dealer and 2 to player (player first)
+
 	for(int i = 1; i <= 4; i++){
 		if(i % 2 == 1){	// deal player
-			playerSum += d.peek();
 			d.dealCard(playerHand);
 		}else{ // deal dealer
-			dealerSum += d.peek();
+			if (dealerHand.isEmpty()) dealerHidden = d.peek(); 
 			d.dealCard(dealerHand); 
 		}
+	} 
+	playerSum = handTotal(playerHand);
+	dealerSum = handTotal(dealerHand);
+	// check if dealer has blackjack
+	if (dealerSum == 21) {
+		cout << "OOPS!  DEALER HAS BLACKJACK!\n";
+		dealerHand.print();
+		return;
 	}
+	// if the hidden card is an ace, handTotal will calculate it as 11.  So the shown some would need to be 11 less than it is
+	dealerShownSum = dealerHidden.rank == Rank::ace ? dealerSum - 11 : dealerSum - toValue(dealerHidden.rank);
 	cout << "PLAYER SHOWING: \n";
 	playerHand.print();
-	cout << "\nDEALER SHOWING: \n";
-	dealerHand.print(); // todo: dealer's first card be concealed.  
+	cout << "TOTAL: " << playerSum << endl;
+	cout << "\nDEALER SHOWING: \n" << dealerHand.peek() << "\n?????\n";
+	cout << "TOTAL: " << dealerShownSum << endl;
+	
+	// todo: dealer's first card be concealed.  
 	// maybe output the peek card, then once the dealer starts hitting, print each card he deals.
 	// player does not know the dealer's hidden card until he is done hitting, typically.  
-
-	// todo: check if dealer has blackjack (this means 21 but with a face card)
 
 	/* Player turn: hit or stand
 	loop until player decides to stand.  every hit, deal a new card.  
@@ -80,4 +94,22 @@ void playBlackJack(){
 bool hasAce(ArrayStack<Card> hand) {
 	Card ace;
 	return hand.has(ace, [](Card c1, Card c2)-> bool {return c1.rank == c2.rank; });
+}
+
+// calculate your hand total (take aces into account)
+int handTotal(ArrayStack<Card> hand, int curTotal) {
+	int aceVal = 0;
+	int total = max(curTotal, 0);
+	if (hasAce(hand)) aceVal = 10;
+	// if no curTotal value is passed, then add all cards in hand currently.  This is to prevent looping and adding cards that were already counted
+	// we will add card values to the function as they are drawing otherwise.  This function will mainly be for checking if we need to make the Ace high
+	if(curTotal < 0)
+		for (int i = 0; i < hand.getSize(); i++)
+		{
+			total += hand.itemAt(i);
+		}
+	// add the full value of the ace (+10) if current total is 11 or less.  otherwise, ace is treated as 1
+	if (total <= 11) total += aceVal;
+
+	return total;
 }
