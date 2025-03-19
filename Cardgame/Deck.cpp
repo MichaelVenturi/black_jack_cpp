@@ -2,7 +2,7 @@
 
 
 // deal the top most card to the target hand
-void Deck::dealCard(ArrayStack<Card> hand){
+void Deck::dealCard(ArrayStack<Card>& hand){
 	if(isEmpty()){
 		std::cout << "Deck is empty";
 		return;
@@ -18,5 +18,11 @@ void Deck::makeDeck() {
 			Card c(generateRank(j), generateSuit(i));
 			deck.push(c);
 		}
+	}
+}
+
+void Deck::shuffleDeck() {
+	for (int i = 0; i < 4; i++) {
+		deck.shuffle();
 	}
 }

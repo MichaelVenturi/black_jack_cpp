@@ -18,11 +18,11 @@ public:
 	// some of these methods are just going to call the arraystack methods
 	void addCard(Card c) { deck.push(c); }
 	bool isEmpty() {return deck.isEmpty(); }
-	Card peek() {return deck.peek(); }
+	Card peek()  { return deck.peek(); }
 	void printDeck() { deck.print(); }
 
 	// parameter will be a player or dealer hand
-	void dealCard(ArrayStack<Card> hand);
+	void dealCard(ArrayStack<Card>& hand);
 	// shuffling the deck will call the ArrayStack's shuffle method 4 times, to ensure super shuffling
 	void shuffleDeck();
 

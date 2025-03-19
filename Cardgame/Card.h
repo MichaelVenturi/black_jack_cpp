@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include <string>
+#include <functional>
 
 
 extern const int SUIT_MAX;

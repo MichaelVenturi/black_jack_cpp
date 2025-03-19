@@ -17,7 +17,7 @@ ArrayStack<ItemType>::ArrayStack(int s) : top(-1) {
 template <class ItemType>
 ArrayStack<ItemType>::ArrayStack(const ArrayStack& other) : top(other.top), size(other.size) {
 	items= new ItemType[other.size];
-	copy(other.items, other.items + (other.top + 1), items);
+	std::copy(other.items, other.items + (other.top + 1), items);
 }
 
 // destructor
@@ -61,6 +61,23 @@ ItemType ArrayStack<ItemType>::peek() const {
 	exit(1);
 }
 
+// this function will check if I have a specific card, but I also want to check just if it has the cards rank or maybe even suit.  I need a different function for that
+template <class ItemType>
+bool ArrayStack<ItemType>::has(ItemType item, std::function<bool(ItemType, ItemType)> compareFunc) {
+	if (compareFunc) {
+		for (int i = 0; i < top + 1; i++) 
+			if (compareFunc(item, items[i])) return true;
+			
+		return false;
+	}
+	else {
+		for (int i = 0; i < top + 1; i++) 
+			if (item == items[i]) return true;		
+
+		return false;
+	}
+}
+
 // shuffle with fisher-yates algorithm
 template <class ItemType>
 void ArrayStack<ItemType>::shuffle() {
@@ -91,10 +108,10 @@ void ArrayStack<ItemType>::print() {
 // overload assignment operator
 template <class ItemType>
 ArrayStack<ItemType> ArrayStack<ItemType>::operator=(const ArrayStack& other){
-	this.top = other.top;
-	this.size = other.size;
-	this.items = new ItemType[size];
-	copy(other.items, other.items + (top +1), this.items);
+	this->top = other.top;
+	this->size = other.size;
+	this->items = new ItemType[size];
+	std::copy(other.items, other.items + (top + 1), this->items);
 	return *this;
 }
 

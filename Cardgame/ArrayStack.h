@@ -31,6 +31,8 @@ public:
 	bool pop();
 	ItemType peek() const;
 
+	bool has(ItemType item, std::function<bool(ItemType, ItemType)> compareFunc = NULL);
+
 	void shuffle();
 	ItemType itemAt(int i);
 	void print();
