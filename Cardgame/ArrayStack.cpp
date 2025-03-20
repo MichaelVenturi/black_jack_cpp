@@ -104,9 +104,11 @@ ItemType ArrayStack<ItemType>::itemAt(int i) {
 }
 
 template <class ItemType>
-void ArrayStack<ItemType>::print() {
+void ArrayStack<ItemType>::print(bool oneLine) {
 	for (int i = 0; i < top+1; i++) {
-		std::cout << items[i] << std::endl;
+		std::cout << items[i];
+		if (oneLine && i < top) std::cout << ", ";
+		else std::cout << std::endl;
 	}
 }
 

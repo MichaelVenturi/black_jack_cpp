@@ -36,7 +36,7 @@ public:
 
 	void shuffle();
 	ItemType itemAt(int i);
-	void print();
+	void print(bool oneLine = false);
 
 	ArrayStack<ItemType> operator=(const ArrayStack&);
 };
