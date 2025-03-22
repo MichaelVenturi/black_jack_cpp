@@ -8,7 +8,11 @@ const bool onOneLine = true;
 
 void playBlackJack();
 bool hasAce(ArrayStack<Card> hand);
+bool isAce(Card c);
 int handTotal(int curTotal, bool hasAce);
+bool hasBlackJack(int total);
+bool bust(int);
+
 int main() {
 
 	bool acesHigh = false;
@@ -19,14 +23,6 @@ int main() {
 	Card card2(Rank::king, Suit::spades);
 
 	ArrayStack<Card> playerHand;
-
-	playerHand.push(card2);
-
-	cout << hasAce(playerHand);
-
-	playerHand.push(card1);
-
-	
 	
 	playBlackJack();
 
@@ -41,6 +37,7 @@ void playBlackJack(){
 	d.shuffleDeck();
 	ArrayStack<Card> playerHand;
 	ArrayStack<Card> dealerHand;
+
 	int playerSum = 0;
 	int dealerSum = 0;
 	int dealerShownSum = 0;
@@ -51,13 +48,13 @@ void playBlackJack(){
 
 	for(int i = 1; i <= 4; i++){
 		if(i % 2 == 1){	// deal player
-			playerHasAce = d.peek().rank == Rank::ace ? true : playerHasAce;
+			playerHasAce = isAce(d.peek()) ? true : playerHasAce;
 			playerSum += d.peek();
 			d.dealCard(playerHand);
 			
 		}else{ // deal dealer
 			if (dealerHand.isEmpty()) dealerHidden = d.peek(); 
-			dealerHasAce = d.peek().rank == Rank::ace ? true : dealerHasAce;
+			dealerHasAce = isAce(d.peek()) ? true : playerHasAce;
 			dealerSum += d.peek();
 			d.dealCard(dealerHand); 
 		}
@@ -67,26 +64,27 @@ void playBlackJack(){
 
 	dealerShownSum = handTotal(dealerSum, dealerHasAce);
 	// check if dealer has blackjack
-	if (dealerShownSum == 21) {
+	if (hasBlackJack(dealerShownSum)) {
 		cout << "OOPS!  DEALER HAS BLACKJACK!\n";
 		dealerHand.print();
 		return;
 	}// check if player has blackjack
-	if (handTotal(playerSum, playerHasAce) == 21) {
+	if (hasBlackJack(handTotal(playerSum, playerHasAce)) ) {
 		cout << "HOORAY!  YOU HAVE BLACKJACK!\n";
 		playerHand.print();
 		return;
 	}// check if both players get blackjack
-	if (handTotal(playerSum, playerHasAce) + dealerShownSum == 42) {
+	if (hasBlackJack(dealerShownSum) && hasBlackJack(handTotal(playerSum, playerHasAce))) {
 		cout << "PUSH!  YOU BOTH HAVE BLACKJACK!\n";
 		return;
 	}
 
 	// subtract the hidden card's rank directly if dealer has no aces, or if he has an ace face up (one ace and a normal card, or two aces)
-	if (!dealerHasAce || dealerHand.peek().rank == Rank::ace) dealerShownSum -= toValue(dealerHidden.rank);
+	if (!dealerHasAce || isAce(dealerHand.peek())) dealerShownSum -= toValue(dealerHidden.rank);
 	// subtract 11 if dealer has 1 ace and its the hidden card
 	else dealerShownSum -= 11;
 
+	// display starting hands
 	cout << "PLAYER SHOWING: \n";
 	playerHand.print();
 	cout << "TOTAL: " << handTotal(playerSum, playerHasAce) << endl;
@@ -106,21 +104,42 @@ void playBlackJack(){
 		// use a switch since there will be more options in the future (double, split)
 		switch (choice) {
 		case 'H':
-			cout << "HIT ME!  player showing:\n";
+			cout << "HIT ME!  player showing: ";
+			playerSum += d.peek();
 			d.dealCard(playerHand);
+			cout << handTotal(playerSum, playerHasAce) << endl;
 			playerHand.print(onOneLine);
-
 			break;
 		case 'S':
-
+			cout << "Player stands on " << handTotal(playerSum, playerHasAce) << endl;
+			break;
 		default:
 			cout << "Error: invalid choice\n";
 			continue;
 		}
 
-
-
+		if (bust(handTotal(playerSum, playerHasAce))) {
+			cout << "OOPS!  YOU BUSTED OUT AT " << handTotal(playerSum, playerHasAce) << ", SORRY!\n";
+			goto loss;
+		}
 	}
+
+	// dealer turn
+	// dealer hits on soft 17, so we only care about his ace for if he opens with blackjack
+	while (dealerSum < 17) {
+		dealerSum += d.peek();
+		d.dealCard(dealerHand);
+	}
+	
+		cout << "Dealer has: " << dealerSum << endl;
+		dealerHand.print(onOneLine);
+
+		if (dealerSum > 21)
+			cout << "The Dealer busted out!  You win!\n";
+
+	loss:
+		cout << "Better luck next time";
+
 }
 
 // check if the player has an ace, necessary since the score will fluctuate if they do
@@ -128,6 +147,10 @@ void playBlackJack(){
 bool hasAce(ArrayStack<Card> hand) {
 	Card ace;
 	return hand.has(ace, [](Card c1, Card c2)-> bool {return c1.rank == c2.rank; });
+}
+
+bool isAce(Card c) {
+	return c.rank == Rank::ace;
 }
 
 // calculate your hand total (take aces into account)
@@ -138,4 +161,11 @@ int handTotal(int total, bool hasAce) {
 	if (total <= 11 && hasAce) total += 10;
 
 	return total;
+}
+
+bool hasBlackJack(int total) {
+	return total == 21;
+}
+bool bust(int total) {
+	return total > 21;
 }
