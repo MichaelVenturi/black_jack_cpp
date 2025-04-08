@@ -15,17 +15,16 @@ bool bust(int);
 
 int main() {
 
-	bool acesHigh = false;
-	Suit s = Suit::hearts;
-	Suit s2 = Suit::hearts;
-
-	Card card1(Rank::ace, Suit::hearts);
-	Card card2(Rank::king, Suit::spades);
-
-	ArrayStack<Card> playerHand;
+	char choice;
 	
-	playBlackJack();
+	do {
+		playBlackJack();
+		cout << "Play again? Y/N\n";
+		cin >> choice;
 
+	} while(choice == 'Y' || choice == 'y');
+
+	cout << "Thank you for playing with us!\n"; 
 	return 0;
 }
 
@@ -59,8 +58,6 @@ void playBlackJack(){
 			d.dealCard(dealerHand); 
 		}
 	} 
-
-
 
 	dealerShownSum = handTotal(dealerSum, dealerHasAce);
 	// check if dealer has blackjack
@@ -97,13 +94,17 @@ void playBlackJack(){
 	*/
 
 	char choice = 'H'; // H for hit, S for stand
-	while(choice != 'S' && playerSum < 21){
-		cout << "Hit or Stand? (H / S): ";
+	while(choice != 'S' && choice !='D' && playerSum < 21){
+		cout << "Hit (H) Stand (S) or Double down (D): ";
 		cin >> choice;
 
 		// use a switch since there will be more options in the future (double, split)
 		switch (choice) {
+		case 'D':
+		case 'd':
+			cout << "DOUBLE DOWN! ";
 		case 'H':
+		case 'h':
 			cout << "HIT ME!  player showing: ";
 			playerSum += d.peek();
 			d.dealCard(playerHand);
@@ -111,6 +112,7 @@ void playBlackJack(){
 			playerHand.print(onOneLine);
 			break;
 		case 'S':
+		case 's':
 			cout << "Player stands on " << handTotal(playerSum, playerHasAce) << endl;
 			break;
 		default:
@@ -134,12 +136,19 @@ void playBlackJack(){
 		cout << "Dealer has: " << dealerSum << endl;
 		dealerHand.print(onOneLine);
 
-		if (dealerSum > 21)
+		if (dealerSum > 21){
 			cout << "The Dealer busted out!  You win!\n";
-
+			return;
+		} else if(handTotal(playerSum, playerHasAce) > dealerSum){
+			cout << "you win\n";
+			return;
+		} else if(handTotal(playerSum, playerHasAce) == dealerSum){
+			cout << "tie\n";
+			return;
+		}
 	loss:
-		cout << "Better luck next time";
-
+		cout << "Better luck next time\n";
+		return;
 }
 
 // check if the player has an ace, necessary since the score will fluctuate if they do
@@ -155,7 +164,6 @@ bool isAce(Card c) {
 
 // calculate your hand total (take aces into account)
 int handTotal(int total, bool hasAce) {
-
 	// we only need to check if there is one ace, if they have two aces, only one of them can ever count as 11 (both would make 22)
 	// add the full value of the ace (+10) if current total is 11 or less.  otherwise, ace is treated as 1
 	if (total <= 11 && hasAce) total += 10;
