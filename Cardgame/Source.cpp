@@ -5,8 +5,10 @@
 using namespace std;
 
 const bool onOneLine = true;
+const int startingChips = 1000;
 
-void playBlackJack();
+void playBlackJack(int);
+bool isValidBet(int, int, int);
 bool hasAce(ArrayStack<Card> hand);
 bool isAce(Card c);
 int handTotal(int curTotal, bool hasAce);
@@ -16,9 +18,12 @@ bool bust(int);
 int main() {
 
 	char choice;
+
+	int chips = startingChips;
+	
 	
 	do {
-		playBlackJack();
+		playBlackJack(chips);
 		cout << "Play again? Y/N\n";
 		cin >> choice;
 
@@ -28,8 +33,15 @@ int main() {
 	return 0;
 }
 
-void playBlackJack(){
+void playBlackJack(int& playerChips){
 	cout << "OK ... OPEN THE GAME\n\n";
+	// place bet
+	int bet;
+	do{
+		cout << "PLACE YOUR BETS (min 100, max 500)\n";
+		cin >> bet;
+	} while(!isValidBet(bet, 100, min(playerChips, 500)));
+
 	// todo: increase max size of ArrayStack, blackjack is usually played with multiple 52 card decks shuffled together
 	Deck d;
 	d.makeDeck();
@@ -39,11 +51,12 @@ void playBlackJack(){
 
 	int playerSum = 0;
 	int dealerSum = 0;
-	int dealerShownSum = 0;
 	bool playerHasAce = false;
 	bool dealerHasAce = false;
-	Card dealerHidden; // the card the player cannot see
-	// deal 4 cards: 2 to dealer and 2 to player (player first)
+	bool playerTurn = true;
+	bool dealerTurn = true;
+	bool playerBust = false;
+	bool win;
 
 	for(int i = 1; i <= 4; i++){
 		if(i % 2 == 1){	// deal player
@@ -52,16 +65,15 @@ void playBlackJack(){
 			d.dealCard(playerHand);
 			
 		}else{ // deal dealer
-			if (dealerHand.isEmpty()) dealerHidden = d.peek(); 
 			dealerHasAce = isAce(d.peek()) ? true : playerHasAce;
 			dealerSum += d.peek();
 			d.dealCard(dealerHand); 
 		}
 	} 
 
-	dealerShownSum = handTotal(dealerSum, dealerHasAce);
+	dealerSum = handTotal(dealerSum, dealerHasAce);
 	// check if dealer has blackjack
-	if (hasBlackJack(dealerShownSum)) {
+	if (hasBlackJack(dealerSum)) {
 		cout << "OOPS!  DEALER HAS BLACKJACK!\n";
 		dealerHand.print();
 		return;
@@ -71,22 +83,16 @@ void playBlackJack(){
 		playerHand.print();
 		return;
 	}// check if both players get blackjack
-	if (hasBlackJack(dealerShownSum) && hasBlackJack(handTotal(playerSum, playerHasAce))) {
+	if (hasBlackJack(dealerSum) && hasBlackJack(handTotal(playerSum, playerHasAce))) {
 		cout << "PUSH!  YOU BOTH HAVE BLACKJACK!\n";
 		return;
 	}
 
-	// subtract the hidden card's rank directly if dealer has no aces, or if he has an ace face up (one ace and a normal card, or two aces)
-	if (!dealerHasAce || isAce(dealerHand.peek())) dealerShownSum -= toValue(dealerHidden.rank);
-	// subtract 11 if dealer has 1 ace and its the hidden card
-	else dealerShownSum -= 11;
-
 	// display starting hands
 	cout << "PLAYER SHOWING: \n";
 	playerHand.print();
-	cout << "TOTAL: " << handTotal(playerSum, playerHasAce) << endl;
+	cout << endl;
 	cout << "\nDEALER SHOWING: \n" << dealerHand.peek() << "\n?????\n";
-	cout << "TOTAL: " << dealerShownSum << endl;
 
 	/* Player turn: hit or stand
 	loop until player decides to stand.  every hit, deal a new card.  
@@ -94,7 +100,7 @@ void playBlackJack(){
 	*/
 
 	char choice = 'H'; // H for hit, S for stand
-	while(choice != 'S' && choice !='D' && playerSum < 21){
+	while(playerTurn){
 		cout << "Hit (H) Stand (S) or Double down (D): ";
 		cin >> choice;
 
@@ -102,7 +108,10 @@ void playBlackJack(){
 		switch (choice) {
 		case 'D':
 		case 'd':
-			cout << "DOUBLE DOWN! ";
+			cout << "DOUBLE DOWN! Your bet is now ";
+			bet *= 2;
+			cout << bet << endl;
+			playerTurn=false;
 		case 'H':
 		case 'h':
 			cout << "HIT ME!  player showing: ";
@@ -114,6 +123,7 @@ void playBlackJack(){
 		case 'S':
 		case 's':
 			cout << "Player stands on " << handTotal(playerSum, playerHasAce) << endl;
+			playerTurn=false;
 			break;
 		default:
 			cout << "Error: invalid choice\n";
@@ -122,33 +132,53 @@ void playBlackJack(){
 
 		if (bust(handTotal(playerSum, playerHasAce))) {
 			cout << "OOPS!  YOU BUSTED OUT AT " << handTotal(playerSum, playerHasAce) << ", SORRY!\n";
-			goto loss;
+			playerBust = true;
+			playerTurn = false;
+			dealerTurn = false;
 		}
 	}
 
-	// dealer turn
+	// dealer turn, dealer still plays out their hand if the player busts
 	// dealer hits on soft 17, so we only care about his ace for if he opens with blackjack
-	while (dealerSum < 17) {
+	while (dealerTurn) {
 		dealerSum += d.peek();
 		d.dealCard(dealerHand);
+		if(dealerSum > 17) dealerTurn = false;
 	}
 	
 		cout << "Dealer has: " << dealerSum << endl;
 		dealerHand.print(onOneLine);
 
-		if (dealerSum > 21){
+		if(playerBust){
+			cout << "Better luck next time\n";
+			win = false;
+		}
+
+		else if (dealerSum > 21){
 			cout << "The Dealer busted out!  You win!\n";
-			return;
+			win = true;
 		} else if(handTotal(playerSum, playerHasAce) > dealerSum){
 			cout << "you win\n";
-			return;
-		} else if(handTotal(playerSum, playerHasAce) == dealerSum){
+			win = true;
+		}  else if(handTotal(playerSum, playerHasAce) == dealerSum){
 			cout << "tie\n";
-			return;
+			return; // skip chip calc if its a push
 		}
-	loss:
-		cout << "Better luck next time\n";
-		return;
+
+		// chip calc
+		if(win){
+			// pays 2:1
+			playerChips += bet;
+			cout << "+" << bet << " chips\n"; 
+		}else{
+			// subtract player's bet from total
+			playerChips -= bet;
+			cout << "-" << bet << " chips\n"; 
+		}
+}
+
+bool isValidBet(int bet, int min, int max){
+	return bet <= max && bet >= min;
 }
 
 // check if the player has an ace, necessary since the score will fluctuate if they do
